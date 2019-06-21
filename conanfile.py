@@ -129,30 +129,22 @@ class GStPluginsBaseConan(ConanFile):
         self._fix_library_names(os.path.join(self.package_folder, "lib", "gstreamer-1.0"))
 
     def package_info(self):
-        self.cpp_info.libs = ["gstallocators-1.0",
-                              "gstapp-1.0",
-                              "gstaudio-1.0",
-                              "gstfft-1.0",
-                              "gstpbutils-1.0",
-                              "gstriff-1.0",
-                              "gstrtp-1.0",
-                              "gstrtsp-1.0",
-                              "gstsdp-1.0",
-                              "gsttag-1.0",
-                              "gstvideo-1.0",
-                              "gstgl-1.0"]
         if self.options.shared:
             pass
         else:
             self.cpp_info.defines.append("GST_PLUGINS_BASE_STATIC")
             self.cpp_info.libdirs.append(os.path.join(self.package_folder, "lib", "gstreamer-1.0"))
-            self.cpp_info.libs.extend(["gstadder",
-                                       "gstapp",
+            self.cpp_info.libs.extend(["gstaudiotestsrc",
                                        "gstaudioconvert",
                                        "gstaudiomixer",
                                        "gstaudiorate",
                                        "gstaudioresample",
-                                       "gstaudiotestsrc",
+                                       "gstvideotestsrc",
+                                       "gstvideoconvert",
+                                       "gstvideorate",
+                                       "gstvideoscale",
+                                       "gstadder",
+                                       "gstapp",
                                        "gstcompositor",
                                        "gstencoding",
                                        "gstgio",
@@ -164,9 +156,21 @@ class GStPluginsBaseConan(ConanFile):
                                        "gstsubparse",
                                        "gsttcp",
                                        "gsttypefindfunctions",
-                                       "gstvideoconvert",
-                                       "gstvideorate",
-                                       "gstvideoscale",
-                                       "gstvideotestsrc",
                                        "gstvolume"])
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.remove("gstopengl")
+        self.cpp_info.libs.extend(["gstallocators-1.0",
+                                   "gstapp-1.0",
+                                   "gstaudio-1.0",
+                                   "gstfft-1.0",
+                                   "gstpbutils-1.0",
+                                   "gstriff-1.0",
+                                   "gstrtp-1.0",
+                                   "gstrtsp-1.0",
+                                   "gstsdp-1.0",
+                                   "gsttag-1.0",
+                                   "gstvideo-1.0",
+                                   "gstgl-1.0"])
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.remove("gstgl-1.0")
         self.cpp_info.includedirs = [os.path.join("include", "gstreamer-1.0")]
