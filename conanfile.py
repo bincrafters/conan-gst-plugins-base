@@ -129,11 +129,13 @@ class GStPluginsBaseConan(ConanFile):
         self._fix_library_names(os.path.join(self.package_folder, "lib", "gstreamer-1.0"))
 
     def package_info(self):
+        gst_plugin_path = os.path.join(self.package_folder, "lib", "gstreamer-1.0")
         if self.options.shared:
-            pass
+            self.output.info("Appending GST_PLUGIN_PATH env var : %s" % gst_plugin_path)
+            self.env_info.GST_PLUGIN_PATH.append(gst_plugin_path)
         else:
             self.cpp_info.defines.append("GST_PLUGINS_BASE_STATIC")
-            self.cpp_info.libdirs.append(os.path.join(self.package_folder, "lib", "gstreamer-1.0"))
+            self.cpp_info.libdirs.append(gst_plugin_path)
             self.cpp_info.libs.extend(["gstaudiotestsrc",
                                        "gstaudioconvert",
                                        "gstaudiomixer",
