@@ -157,8 +157,8 @@ class GStPluginsBaseConan(ConanFile):
                                        "gsttcp",
                                        "gsttypefindfunctions",
                                        "gstvolume"])
-        if self.settings.os == "Linux":
-            self.cpp_info.libs.remove("gstopengl")
+            if self.settings.os == "Linux":
+                self.cpp_info.libs.remove("gstopengl")
         self.cpp_info.libs.extend(["gstallocators-1.0",
                                    "gstapp-1.0",
                                    "gstaudio-1.0",
