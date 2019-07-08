@@ -72,9 +72,6 @@ class GStPluginsBaseConan(ConanFile):
             add_flag("c_link_args", value)
             add_flag("cpp_link_args", value)
 
-        glib_pc = os.path.join(self.deps_cpp_info["glib"].rootpath, "lib", "pkgconfig")
-        gstreamer_pc = os.path.join(self.deps_cpp_info["gstreamer"].rootpath, "lib", "pkgconfig")
-        pkg_config_paths = [glib_pc, gstreamer_pc, self.source_folder]
         meson = Meson(self)
         if self.settings.compiler == "Visual Studio":
             add_linker_flag("-lws2_32")
@@ -89,12 +86,26 @@ class GStPluginsBaseConan(ConanFile):
         defs["tests"] = "disabled"
         meson.configure(build_folder=self._build_subfolder,
                         source_folder=self._source_subfolder,
-                        pkg_config_paths=pkg_config_paths,
                         defs=defs)
         return meson
 
+    def _copy_pkg_config(self, name):
+        root = self.deps_cpp_info[name].rootpath
+        pc_dir = os.path.join(root, 'lib', 'pkgconfig')
+        pc_files = glob.glob('%s/*.pc' % pc_dir)
+        if not pc_files:  # zlib store .pc in root
+            pc_files = glob.glob('%s/*.pc' % root)
+        for pc_name in pc_files:
+            new_pc = os.path.basename(pc_name)
+            self.output.warn('copy .pc file %s' % os.path.basename(pc_name))
+            shutil.copy(pc_name, new_pc)
+            prefix = tools.unix_path(root) if self.settings.os == 'Windows' else root
+            tools.replace_prefix_in_pc_file(new_pc, prefix)
+
     def build(self):
         self._apply_patches()
+        self._copy_pkg_config("glib")
+        self._copy_pkg_config("gstreamer")
         if self.settings.os == "Linux":
             shutil.move("libmount.pc", "mount.pc")
         shutil.move("pcre.pc", "libpcre.pc")
