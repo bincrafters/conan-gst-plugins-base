@@ -10,7 +10,8 @@ import shutil
 class GStPluginsBaseConan(ConanFile):
     name = "gst-plugins-base"
     version = "1.16.0"
-    description = "GStreamer is a development framework for creating applications like media players, video editors, streaming media broadcasters and so on"
+    description = "GStreamer is a development framework for creating applications like media players, video editors, " \
+                  "streaming media broadcasters and so on"
     topics = ("conan", "gstreamer", "multimedia", "video", "audio", "broadcasting", "framework", "media")
     url = "https://github.com/bincrafters/conan-gst-plugins-base"
     homepage = "https://gstreamer.freedesktop.org/"
