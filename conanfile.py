@@ -72,22 +72,11 @@ class GStPluginsBaseConan(ConanFile):
             add_flag("c_link_args", value)
             add_flag("cpp_link_args", value)
 
-        def add_compiler_linker_flag(value):
-            add_compiler_flag(value)
-            add_linker_flag(value)
-
         glib_pc = os.path.join(self.deps_cpp_info["glib"].rootpath, "lib", "pkgconfig")
         gstreamer_pc = os.path.join(self.deps_cpp_info["gstreamer"].rootpath, "lib", "pkgconfig")
         pkg_config_paths = [glib_pc, gstreamer_pc, self.source_folder]
         meson = Meson(self)
-        if self.settings.os == "Linux":
-            defs["libdir"] = "lib"
-        if str(self.settings.compiler) in ["gcc", "clang"]:
-            if self.settings.arch == "x86":
-                add_compiler_linker_flag("-m32")
-            elif self.settings.arch == "x86_64":
-                add_compiler_linker_flag("-m64")
-        elif self.settings.compiler == "Visual Studio":
+        if self.settings.compiler == "Visual Studio":
             add_linker_flag("-lws2_32")
             add_compiler_flag("-%s" % self.settings.compiler.runtime)
             if int(str(self.settings.compiler.version)) < 14:
