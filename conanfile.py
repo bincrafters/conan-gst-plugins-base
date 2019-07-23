@@ -82,8 +82,8 @@ class GStPluginsBaseConan(ConanFile):
             add_compiler_flag("-%s" % self.settings.compiler.runtime)
             if int(str(self.settings.compiler.version)) < 14:
                 add_compiler_flag("-Dsnprintf=_snprintf")
-        if not self.options["gstreamer"].shared:
-            add_compiler_flag("-DGST_STATIC_COMPILATION")
+        if self.settings.get_safe("compiler.runtime"):
+            defs["b_vscrt"] = str(self.settings.compiler.runtime).lower()
         defs["tools"] = "disabled"
         defs["examples"] = "disabled"
         defs["benchmarks"] = "disabled"
