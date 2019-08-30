@@ -182,4 +182,4 @@ class GStPluginsBaseConan(ConanFile):
                                    "gstgl-1.0"])
         if self.settings.os == "Linux":
             self.cpp_info.libs.remove("gstgl-1.0")
-        self.cpp_info.includedirs = [os.path.join("include", "gstreamer-1.0")]
+        self.cpp_info.includedirs = ["include", os.path.join("include", "gstreamer-1.0")]
