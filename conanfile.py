@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, tools, Meson, VisualStudioBuildEnvironment
 import glob
 import os
@@ -34,6 +31,7 @@ class GStPluginsBaseConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
         self.options['gstreamer'].shared = self.options.shared
 
     def config_options(self):
