@@ -107,8 +107,6 @@ class GStPluginsBaseConan(ConanFile):
         self._apply_patches()
         self._copy_pkg_config("glib")
         self._copy_pkg_config("gstreamer")
-        if self.settings.os == "Linux":
-            shutil.move("libmount.pc", "mount.pc")
         shutil.move("pcre.pc", "libpcre.pc")
         with tools.environment_append(VisualStudioBuildEnvironment(self).vars) if self._is_msvc else tools.no_op():
             meson = self._configure_meson()
