@@ -3,7 +3,6 @@ import glob
 import os
 import shutil
 
-_meson_feature = ["disabled", "enabled", "auto"]
 
 class GStPluginsBaseConan(ConanFile):
     name = "gst-plugins-base"
@@ -16,10 +15,12 @@ class GStPluginsBaseConan(ConanFile):
     license = "GPL-2.0-only"
     exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
+    _meson_feature = ["disabled", "enabled", "auto"]
     options = {"shared": [True, False], "fPIC": [True, False], "x11": _meson_feature, "xvideo": _meson_feature}
     default_options = {"shared": False, "fPIC": True, "x11": "auto", "xvideo": "auto"}
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
+
     exports_sources = ["patches/*.patch"]
 
     requires = ("gstreamer/1.16.0@bincrafters/stable",)
