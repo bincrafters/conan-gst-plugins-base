@@ -21,7 +21,7 @@ class GStPluginsBaseConan(ConanFile):
     _build_subfolder = "build_subfolder"
     exports_sources = ["patches/*.patch"]
 
-    requires = ("gstreamer/1.16.0@bincrafters/stable",)
+    requires = ("gstreamer/1.16.0@bincrafters/stable", "libalsa/1.1.9")
     generators = "pkg_config"
 
     @property
