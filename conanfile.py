@@ -3,6 +3,7 @@ import glob
 import os
 import shutil
 
+_meson_feature = ["disabled", "enabled", "auto"]
 
 class GStPluginsBaseConan(ConanFile):
     name = "gst-plugins-base"
@@ -15,8 +16,8 @@ class GStPluginsBaseConan(ConanFile):
     license = "GPL-2.0-only"
     exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    options = {"shared": [True, False], "fPIC": [True, False], "x11": _meson_feature, "xvideo": _meson_feature}
+    default_options = {"shared": False, "fPIC": True, "x11": "auto", "xvideo": "auto"}
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     exports_sources = ["patches/*.patch"]
@@ -39,7 +40,7 @@ class GStPluginsBaseConan(ConanFile):
 
     @property
     def _meson_required(self):
-        from six import StringIO 
+        from six import StringIO
         mybuf = StringIO()
         if self.run("meson -v", output=mybuf, ignore_errors=True) != 0:
             return True
@@ -89,10 +90,10 @@ class GStPluginsBaseConan(ConanFile):
                 add_compiler_flag("-Dsnprintf=_snprintf")
         if self.settings.get_safe("compiler.runtime"):
             defs["b_vscrt"] = str(self.settings.compiler.runtime).lower()
-        defs["tools"] = "disabled"
-        defs["examples"] = "disabled"
-        defs["benchmarks"] = "disabled"
-        defs["tests"] = "disabled"
+        for x in ["tools", "examples", "benchmarks", "tests"]:
+            defs[x] = "disabled"
+        for x in ["x11", "xvideo"]:
+            defs[x] = self.options.get_safe(x)
         meson.configure(build_folder=self._build_subfolder,
                         source_folder=self._source_subfolder,
                         defs=defs)
