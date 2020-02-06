@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, tools, Meson, VisualStudioBuildEnvironment
 import glob
 import os
@@ -15,7 +12,6 @@ class GStPluginsBaseConan(ConanFile):
     topics = ("conan", "gstreamer", "multimedia", "video", "audio", "broadcasting", "framework", "media")
     url = "https://github.com/bincrafters/conan-gst-plugins-base"
     homepage = "https://gstreamer.freedesktop.org/"
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = "GPL-2.0-only"
     exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
@@ -25,7 +21,7 @@ class GStPluginsBaseConan(ConanFile):
     _build_subfolder = "build_subfolder"
     exports_sources = ["patches/*.patch"]
 
-    requires = ("gstreamer/1.16.0@bincrafters/stable",)
+    requires = ("gstreamer/1.16.0@bincrafters/stable", "libalsa/1.1.9")
     generators = "pkg_config"
 
     @property
@@ -34,15 +30,24 @@ class GStPluginsBaseConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
         self.options['gstreamer'].shared = self.options.shared
 
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
 
+    @property
+    def _meson_required(self):
+        from six import StringIO 
+        mybuf = StringIO()
+        if self.run("meson -v", output=mybuf, ignore_errors=True) != 0:
+            return True
+        return tools.Version(mybuf.getvalue()) < tools.Version('0.53.0')
+
     def build_requirements(self):
-        if not tools.which("meson"):
-            self.build_requires("meson_installer/0.50.0@bincrafters/stable")
+        if self._meson_required:
+            self.build_requires("meson/0.53.0")
         if not tools.which("pkg-config"):
             self.build_requires("pkg-config_installer/0.29.2@bincrafters/stable")
         self.build_requires("bison_installer/3.3.2@bincrafters/stable")
@@ -110,9 +115,6 @@ class GStPluginsBaseConan(ConanFile):
         self._apply_patches()
         self._copy_pkg_config("glib")
         self._copy_pkg_config("gstreamer")
-        if self.settings.os == "Linux":
-            shutil.move("libmount.pc", "mount.pc")
-        shutil.move("pcre.pc", "libpcre.pc")
         with tools.environment_append(VisualStudioBuildEnvironment(self).vars) if self._is_msvc else tools.no_op():
             meson = self._configure_meson()
             meson.build()
