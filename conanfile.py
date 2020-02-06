@@ -15,13 +15,21 @@ class GStPluginsBaseConan(ConanFile):
     license = "GPL-2.0-only"
     exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False],
+        "with_libalsa": [True, False]
+        }
+    default_options = {
+        "shared": False,
+        "fPIC": True,
+        "with_libalsa": True
+        }
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     exports_sources = ["patches/*.patch"]
 
-    requires = ("gstreamer/1.16.0@bincrafters/stable", "libalsa/1.1.9")
+    requires = ("gstreamer/1.16.0@bincrafters/stable")
     generators = "pkg_config"
 
     @property
@@ -36,6 +44,8 @@ class GStPluginsBaseConan(ConanFile):
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
+        if self.settings.os != "Linux":
+            del self.options.with_libalsa
 
     @property
     def _meson_required(self):
@@ -44,6 +54,11 @@ class GStPluginsBaseConan(ConanFile):
         if self.run("meson -v", output=mybuf, ignore_errors=True) != 0:
             return True
         return tools.Version(mybuf.getvalue()) < tools.Version('0.53.0')
+    
+    def requirements(self):
+        if self.settings.os == "Linux":
+            if self.options.with_libalsa:
+                self.requires("libalsa/1.1.9")
 
     def build_requirements(self):
         if self._meson_required:
