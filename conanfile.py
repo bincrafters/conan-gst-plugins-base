@@ -21,7 +21,7 @@ class GStPluginsBaseConan(ConanFile):
         "with_libalsa": [True, False]
         }
     default_options = {
-        "shared": False,
+        "shared": True,
         "fPIC": True,
         "with_libalsa": True
         }
