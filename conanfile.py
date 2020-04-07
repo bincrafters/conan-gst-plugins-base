@@ -13,7 +13,6 @@ class GStPluginsBaseConan(ConanFile):
     url = "https://github.com/bincrafters/conan-gst-plugins-base"
     homepage = "https://gstreamer.freedesktop.org/"
     license = "GPL-2.0-only"
-    exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
