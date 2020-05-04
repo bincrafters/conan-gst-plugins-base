@@ -52,7 +52,7 @@ class GStPluginsBaseConan(ConanFile):
                 self.requires("libalsa/1.1.9")
 
     def build_requirements(self):
-        self.build_requires("meson/0.53.2")
+        self.build_requires("meson/0.54.0")
         if not tools.which("pkg-config"):
             self.build_requires("pkg-config_installer/0.29.2@bincrafters/stable")
         self.build_requires("bison_installer/3.3.2@bincrafters/stable")
