@@ -6,7 +6,6 @@ import shutil
 
 class GStPluginsBaseConan(ConanFile):
     name = "gst-plugins-base"
-    version = "1.16.0"
     description = "GStreamer is a development framework for creating applications like media players, video editors, " \
                   "streaming media broadcasters and so on"
     topics = ("conan", "gstreamer", "multimedia", "video", "audio", "broadcasting", "framework", "media")
@@ -59,15 +58,8 @@ class GStPluginsBaseConan(ConanFile):
         self.build_requires("flex_installer/2.6.4@bincrafters/stable")
 
     def source(self):
-        source_url = "https://gitlab.freedesktop.org/gstreamer/{n}/-/archive/{v}/{n}-{v}.tar.bz2".format(v=self.version, n=self.name)
-        sha256 = "e6ab73e4c3b0e6b112159b89661a8f709e9bcecfc2827466bc4d3e939ff9e14e"
-        tools.get(source_url, sha256=sha256)
+        tools.get(**self.conan_data["sources"][self.version])
         os.rename("%s-%s" % (self.name, self.version), self._source_subfolder)
-
-    def _apply_patches(self):
-        for filename in sorted(glob.glob("patches/*.patch")):
-            self.output.info('applying patch "%s"' % filename)
-            tools.patch(base_path=self._source_subfolder, patch_file=filename)
 
     def _configure_meson(self):
         defs = dict()
@@ -117,7 +109,8 @@ class GStPluginsBaseConan(ConanFile):
             tools.replace_prefix_in_pc_file(new_pc, prefix)
 
     def build(self):
-        self._apply_patches()
+        for p in self.conan_data["patches"][self.version]:
+            tools.patch(**p)
         self._copy_pkg_config("glib")
         self._copy_pkg_config("gstreamer")
         with tools.environment_append(VisualStudioBuildEnvironment(self).vars) if self._is_msvc else tools.no_op():
