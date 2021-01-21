@@ -6,6 +6,9 @@ class TestPackageConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
 
+    def requirements(self):
+        self.requires("cmake/3.19.3")
+
     def build(self):
         cmake = CMake(self)
         cmake.configure()
