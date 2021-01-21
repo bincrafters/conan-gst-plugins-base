@@ -112,8 +112,9 @@ class GStPluginsBaseConan(ConanFile):
             tools.replace_prefix_in_pc_file(new_pc, prefix)
 
     def build(self):
-        for p in self.conan_data["patches"][self.version]:
+        for p in self.conan_data.get("patches", {}).get(self.version, []):
             tools.patch(**p)
+            
         self._copy_pkg_config("glib")
         self._copy_pkg_config("gstreamer")
         with tools.environment_append(VisualStudioBuildEnvironment(self).vars) if self._is_msvc else tools.no_op():
