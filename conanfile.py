@@ -113,7 +113,7 @@ class GStPluginsBaseConan(ConanFile):
 
     def build(self):
         for p in self.conan_data.get("patches", {}).get(self.version, []):
-            tools.patch(**p)
+            tools.patch(**p)erer
             
         self._copy_pkg_config("glib")
         self._copy_pkg_config("gstreamer")
