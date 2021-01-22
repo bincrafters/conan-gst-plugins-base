@@ -51,7 +51,7 @@ class GStPluginsBaseConan(ConanFile):
                 self.requires("libalsa/1.1.9")
 
     def build_requirements(self):
-        self.build_requires("meson/0.54.2")
+        self.build_requires("meson/0.56.2")
         if not tools.which("pkg-config"):
             self.build_requires("pkgconf/1.7.3")
         if self.settings.os == 'Windows':
